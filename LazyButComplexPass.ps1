@@ -1,14 +1,25 @@
 function passGenerator{
-
-    $special = $(33..47|%{[char]$_}) + $(58..64|%{[char]$_}) +$(91..96|%{[char]$_}) + $(123..126|%{[char]$_})|Get-Random -c 2
-
-    $number = 48..57|%{[char]$_}|Get-Random -c 3
-
-    $upCase = 65..90|%{[char]$_}|Get-Random -c 4
-
-    $lowCase = 97..122|%{[char]$_}|Get-Random -c 5
-
-    $pass = $special + $number + $upCase +$lowCase
-    
-    return $pass -join ""
+    $Length = 35
+ 
+    $PasswordCharCodes = {33..126}.invoke()
+ 
+    #Exclude ",',/,`,O,0
+    34,39,47,96,48,79 | foreach {[void]$PasswordCharCodes.Remove($_)}
+ 
+    $PasswordChars = [char[]]$PasswordCharCodes
+ 
+    do { 
+        $NewPassWord =  $(foreach ($i in 1..$length) 
+        { Get-Random -InputObject $PassWordChars }) -join '' 
+    }
+ 
+    until (
+        ( $NewPassword -cmatch '[A-Z]' ) -and
+        ( $NewPassWord -cmatch '[a-z]' ) -and
+        ( $NewPassWord -imatch '[0-9]' ) -and 
+        ( $NewPassWord -imatch '[^A-Z0-9]' )
+    ) 
+          
+    return $NewPassword
 }
+passGenerator
